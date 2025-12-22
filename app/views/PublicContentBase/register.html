@@ -45,7 +45,7 @@
 
 #{form @processRegister(), id:'form', name:'reg-form'}
 <h2 class="text-left">&{'Public.register.title'}</h2>
-
+<input type="hidden" name="csrfToken" value="${csrfToken}">
 #{ifErrors}
 <div id="register_error" class="error">${errors[0]}</div>
 #{/ifErrors}
