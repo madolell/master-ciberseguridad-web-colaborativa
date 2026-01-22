@@ -15,11 +15,9 @@ public class PublicContentBase extends Controller {
     }
 
 
-    public static void processRegister(String username, String password,
-                                   String passwordCheck, String type,
-                                   String csrfToken) {
-
-    	String sessionToken = session.get("csrfToken");
+    public static void processRegister(String username, String password, String passwordCheck, String type, String csrfToken){
+  
+      String sessionToken = session.get("csrfToken");
 
     	if (sessionToken == null || csrfToken == null || !sessionToken.equals(csrfToken)) {
         forbidden("Invalid CSRF token");
@@ -27,21 +25,13 @@ public class PublicContentBase extends Controller {
 
     	// Invalidar token tras uso
     	session.remove("csrfToken");
-
-    	// Validaciones mínimas adicionales
-   	if (!password.equals(passwordCheck)) {
-        	error("Passwords do not match");
-    	}
-
-    	// HARDENING: evitar escalada de privilegios
-    	if (!"student".equals(type)) {
-        	forbidden("Invalid user type");
-    	}
-
-    	User u = new User(username, HashUtils.getMd5(password), type, -1);
-    	u.save();
-
-    	registerComplete();
+        String salt = HashUtils.generateSalt();
+        String hashedPassword = HashUtils.hashPassword(password, salt);
+        
+        User u = new User(username, hashedPassword, type, -1);
+        u.setSalt(salt);
+        u.save();
+        registerComplete();
     }
 
     public static void registerComplete(){
