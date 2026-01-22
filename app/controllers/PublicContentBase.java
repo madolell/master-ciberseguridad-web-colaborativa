@@ -13,7 +13,11 @@ public class PublicContentBase extends Controller {
     }
 
     public static void processRegister(String username, String password, String passwordCheck, String type){
-        User u = new User(username, HashUtils.getMd5(password), type, -1);
+        String salt = HashUtils.generateSalt();
+        String hashedPassword = HashUtils.hashPassword(password, salt);
+        
+        User u = new User(username, hashedPassword, type, -1);
+        u.setSalt(salt);
         u.save();
         registerComplete();
     }

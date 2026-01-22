@@ -16,13 +16,16 @@ public class Secure extends Controller {
         login();
     }
 
-    public static void authenticate(String username, String password){
+
+    public static void authenticate(String username, String password) {
+
         User u = User.loadUser(username);
         if (u != null && u.getPassword().equals(HashUtils.getMd5(password))){
             // Guardamos solo identificador NO sensible
             session.put("username", username);
             Application.index();
-        }else{
+
+        } else {
             flash.put("error", Messages.get("Public.login.error.credentials"));
             login();
         }
